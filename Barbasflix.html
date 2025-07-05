@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Barbasflix - Inicio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+    body {
+      background-color: #141414;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* --- Pantalla de Login --- */
+    #login-screen {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #000;
+    }
+    #login-logo {
+      font-family: 'Bebas Neue', cursive, sans-serif;
+      font-size: 5rem;
+      color: #e50914;
+      letter-spacing: 8px;
+      user-select: none;
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+      cursor: default;
+    }
+    #login-form {
+      background: #222;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 320px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.7);
+    }
+    #login-form label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: bold;
+    }
+    #login-form input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+      border: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      background: #333;
+      color: white;
+    }
+    #login-form input::placeholder {
+      color: #bbb;
+    }
+    #login-form button {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #e50914;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      font-weight: bold;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #login-form button:hover {
+      background-color: #b0060e;
+    }
+    /* --- Selección de perfiles --- */
+    #profile-selection {
+      display: none;
+      background: #000;
+      min-height: 100vh;
+      padding: 0 40px 40px 40px;
+      color: white;
+      position: relative;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    .netflix-logo {
+      font-family: 'Bebas Neue', cursive, sans-serif;
+      font-size: 2.2rem;
+      color: #e50914;
+      letter-spacing: 4px;
+      position: absolute;
+      top: 32px;
+      left: 40px;
+      user-select: none;
+    }
+    .profile-select-title {
+      font-size: 2.5rem;
+      margin: 120px 0 48px 0;
+      font-weight: 400;
+      letter-spacing: 1px;
+    }
+    .profile-list {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .profile-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+      width: 140px;
+      border-radius: 10px;
+      padding: 12px;
+      color: white;
+      user-select: none;
+    }
+    .profile-item:hover {
+      transform: scale(1.08);
+    }
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 64px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      user-select: none;
+    }
+    .profile-name {
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+    }
+    /* Colores de perfiles */
+    .blue { background-color: #0071eb; }
+    .red { background-color: #e50914; }
+    .yellow { background-color: #f5c518; color: #222; }
+    .manage-btn {
+      margin-top: 16px;
+      padding: 12px 32px;
+      border: 1px solid #b3b3b3;
+      background: transparent;
+      color: #b3b3b3;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      user-select: none;
+    }
+    .manage-btn:hover {
+      background: #fff;
+      color: #222;
+    }
+    /* --- Modal agregar perfil --- */
+    #modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 100;
+    }
+    #modal.active { display: flex; }
+    #modal-content {
+      background: #222;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 320px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    #modal-content label { font-weight: bold; }
+    #modal-content input[type="text"],
+    #modal-content input[type="file"] {
+      padding: 0.5rem;
+      border-radius: 4px;
+      border: none;
+      font-size: 1rem;
+      background: #333;
+      color: white;
+    }
+    #modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+    #modal-buttons button {
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    #modal-buttons .save-btn {
+      background-color: #e50914;
+      color: white;
+    }
+    #modal-buttons .save-btn:hover {
+      background-color: #b0060e;
+    }
+    #modal-buttons .cancel-btn {
+      background-color: #555;
+      color: white;
+    }
+    #modal-buttons .cancel-btn:hover {
+      background-color: #333;
+    }
+    /* --- Pantalla principal --- */
+    #main-screen {
+      display: none;
+      flex-direction: column;
+      min-height: 100vh;
+      background-color: #141414;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background-color: #141414;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid #333;
+    }
+    .logo {
+      font-family: 'Bebas Neue', cursive, sans-serif;
+      font-size: 2.5rem;
+      font-weight: 400;
+      color: #e50914;
+      letter-spacing: 5px;
+      user-select: none;
+      cursor: default;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+    nav ul li {
+      cursor: pointer;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    nav ul li:hover {
+      color: #e50914;
+    }
+    .account-menu {
+      position: relative;
+      cursor: pointer;
+    }
+    .account-avatar {
+      width: 40px;
+      height: 40px;
+      background-color: #e50914;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      user-select: none;
+      overflow: hidden;
+    }
+    .account-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .account-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 50px;
+      background: #222;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.7);
+      width: 180px;
+      z-index: 20;
+    }
+    .account-dropdown.active {
+      display: block;
+    }
+    .account-dropdown button {
+      width: 100%;
+      background: none;
+      border: none;
+      color: white;
+      padding: 12px 16px;
+      text-align: left;
+      cursor: pointer;
+      font-weight: 600;
+      border-bottom: 1px solid #333;
+      transition: background-color 0.3s ease;
+    }
+    .account-dropdown button:hover {
+      background-color: #e50914;
+    }
+    /* --- Hero section --- */
+    #hero {
+      position: relative;
+      height: 60vh;
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 2rem 4rem;
+      color: white;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    }
+    #hero h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+    }
+    #hero p {
+      max-width: 600px;
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+    #hero .buttons {
+      display: flex;
+      gap: 1rem;
+    }
+    #hero button {
+      padding: 0.75rem 2rem;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background-color 0.3s ease;
+    }
+    #hero .btn-read {
+      background-color: #e50914;
+      color: white;
+    }
+    #hero .btn-read:hover {
+      background-color: #b0060e;
+    }
+    #hero .btn-list {
+      background-color: rgba(109, 109, 110, 0.7);
+      color: white;
+    }
+    #hero .btn-list:hover {
+      background-color: rgba(109, 109, 110, 1);
+    }
+    /* --- Carruseles --- */
+    .carousel {
+      margin: 2rem 4rem;
+    }
+    .carousel h2 {
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      letter-spacing: 2px;
+    }
+    .carousel-container {
+      display: flex;
+      overflow-x: auto;
+      gap: 1rem;
+      padding-bottom: 0.5rem;
+    }
+    .carousel-container::-webkit-scrollbar {
+      height: 8px;
+    }
+    .carousel-container::-webkit-scrollbar-thumb {
+      background-color: #e50914;
+      border-radius: 4px;
+    }
+    /* --- Tarjetas de películas --- */
+    .book-card {
+      position: relative;
+      min-width: 160px;
+      height: 240px;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      flex-shrink: 0;
+      background-color: #222;
+      box-shadow: 0 0 8px rgba(0,0,0,0.7);
+      transition: transform 0.3s ease;
+    }
+    .book-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+    .book-card:hover {
+      transform: scale(1.1);
+      z-index: 5;
+      box-shadow: 0 0 15px #e50914;
+    }
+    .book-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.8));
+      color: white;
+      padding: 0.5rem 0.75rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    .book-card:hover .book-overlay {
+      opacity: 1;
+    }
+    /* Responsive */
+    @media (max-width: 768px) {
+      #hero {
+        height: 40vh;
+        padding: 1rem 2rem;
+      }
+      #hero h1 {
+        font-size: 2rem;
+      }
+      #hero p {
+        font-size: 1rem;
+        max-width: 100%;
+      }
+      .carousel {
+        margin: 1rem 1rem;
+      }
+      .carousel-container {
+        gap: 0.5rem;
+      }
+      .book-card {
+        min-width: 120px;
+        height: 180px;
+      }
+      .logo {
+        font-size: 2rem;
+      }
+      .profile-item {
+        width: 90px !important;
+        padding: 8px !important;
+      }
+      .profile-avatar {
+        width: 90px !important;
+        height: 90px !important;
+        font-size: 48px !important;
+        border-radius: 12px !important;
+      }
+      .profile-name {
+        font-size: 1rem !important;
+      }
+    }
+    /* --- Modal info película --- */
+    #book-info-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    #book-info-modal.active {
+      display: flex;
+    }
+    #book-info-content {
+      background: #222;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      color: white;
+      position: relative;
+      box-shadow: 0 0 15px rgba(229,9,20,0.7);
+    }
+    #book-info-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #e50914;
+      border: none;
+      color: white;
+      font-weight: bold;
+      padding: 0.3rem 0.6rem;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    #book-info-title {
+      margin-bottom: 1rem;
+      font-size: 2rem;
+    }
+    #book-info-author,
+    #book-info-year {
+      font-weight: bold;
+    }
+    #book-info-description {
+      margin-top: 1rem;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Pantalla de Login -->
+  <section id="login-screen">
+    <div id="login-logo">Barbasflix</div>
+    <form id="login-form">
+      <label for="email">Correo electrónico</label>
+      <input type="email" id="email" required placeholder="ejemplo@correo.com" />
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" required placeholder="********" />
+      <button type="submit">Iniciar sesión</button>
+    </form>
+  </section>
+
+  <!-- Selección de perfiles -->
+  <section id="profile-selection">
+    <div class="netflix-logo">BARBASFLIX</div>
+    <div class="profile-select-title">¿Quién está viendo ahora?</div>
+    <div class="profile-list" id="profiles-container"></div>
+    <button class="manage-btn" id="manage-profiles-btn">Agregar perfil</button>
+  </section>
+
+  <!-- Modal agregar perfil -->
+  <div id="modal">
+    <div id="modal-content">
+      <h3>Agregar nuevo perfil</h3>
+      <label for="profile-name">Nombre:</label>
+      <input type="text" id="profile-name" placeholder="Nombre del perfil" />
+      <label for="profile-photo">Foto de perfil:</label>
+      <input type="file" id="profile-photo" accept="image/*" />
+      <div id="modal-buttons">
+        <button class="save-btn" id="save-profile">Guardar</button>
+        <button class="cancel-btn" id="cancel-profile">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pantalla principal -->
+  <section id="main-screen">
+    <header>
+      <div class="logo">Barbasflix</div>
+      <nav>
+        <ul>
+          <li>Inicio</li>
+          <li>Series</li>
+          <li>Películas</li>
+          <li>Nuevo y Popular</li>
+          <li>Mi lista</li>
+        </ul>
+      </nav>
+      <div class="account-menu" id="account-menu">
+        <div class="account-avatar" id="account-avatar">A</div>
+        <div class="account-dropdown" id="account-dropdown">
+          <button id="change-profile-btn">Cambiar perfil</button>
+          <button id="account-settings-btn">Configuración de cuenta</button>
+          <button id="logout-btn">Cerrar sesión</button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section id="hero">
+      <h1 id="hero-title">Rocky 4</h1>
+      <p id="hero-description">Rocky Balboa se enfrenta a un nuevo desafío en el ring.</p>
+      <div class="buttons">
+        <button class="btn-read" id="btn-read">Ver ahora</button>
+        <button class="btn-list" id="btn-list">Mi lista</button>
+      </div>
+    </section>
+
+    <!-- Carruseles -->
+    <section class="carousel">
+      <h2>Continuar viendo</h2>
+      <div class="carousel-container" id="continue-reading"></div>
+    </section>
+
+    <section class="carousel">
+      <h2>Nuestras películas destacadas</h2>
+      <div class="carousel-container" id="featured-series"></div>
+    </section>
+
+    <section class="carousel">
+      <h2>Clásicos imprescindibles</h2>
+      <div class="carousel-container" id="classics"></div>
+    </section>
+
+    <section class="carousel">
+      <h2>Nuevas incorporaciones</h2>
+      <div class="carousel-container" id="new-arrivals"></div>
+    </section>
+  </section>
+
+  <!-- Modal info película -->
+  <div id="book-info-modal">
+    <div id="book-info-content">
+      <button id="book-info-close">X</button>
+      <h2 id="book-info-title"></h2>
+      <p><strong>Director:</strong> <span id="book-info-author"></span></p>
+      <p><strong>Año de estreno:</strong> <span id="book-info-year"></span></p>
+      <p id="book-info-description"></p>
+    </div>
+  </div>
+
+  <script>
+    // Perfiles actualizados con emojis y nombres
+    let profiles = [
+      { id: 1, name: "mis maju", color: "blue", photo: null, emoji: "😊" },
+      { id: 2, name: "mis betza", color: "red", photo: null, emoji: "😜" },
+      { id: 3, name: "el barbas", color: "yellow", photo: null, emoji: "😎" }
+    ];
+
+    const movies = [
+      {
+        id: 1,
+        title: "Rocky 4",
+        description: "Rocky Balboa se enfrenta a un nuevo desafío en el ring.",
+        director: "Sylvester Stallone",
+        year: "1985",
+        cover: "https://upload.wikimedia.org/wikipedia/en/9/95/Rocky_IV.jpg",
+        genre: "Deportes",
+        duration: "91 min",
+        rating: 4.3,
+        watchLink: "https://drive.google.com/tu-enlace-rocky4"
+      },
+      {
+        id: 2,
+        title: "El hijo de la novia",
+        description: "Una comedia dramática sobre la familia y el amor.",
+        director: "Juan José Campanella",
+        year: "2001",
+        cover: "https://pics.filmaffinity.com/El_hijo_de_la_novia-570644260-large.jpg",
+        genre: "Comedia",
+        duration: "123 min",
+        rating: 4.6,
+        watchLink: "https://drive.google.com/tu-enlace-hijo-de-la-novia"
+      },
+      {
+        id: 3,
+        title: "Troya",
+        description: "La épica historia de la guerra de Troya.",
+        director: "Wolfgang Petersen",
+        year: "2004",
+        cover: "https://pics.filmaffinity.com/troy-509263865-large.jpg",
+        genre: "Épica",
+        duration: "163 min",
+        rating: 4.1,
+        watchLink: "https://drive.google.com/tu-enlace-troya"
+      },
+      {
+        id: 4,
+        title: "Avengers Endgame",
+        description: "La batalla final para salvar el universo.",
+        director: "Anthony y Joe Russo",
+        year: "2019",
+        cover: "https://upload.wikimedia.org/wikipedia/en/0/0d/Avengers_Endgame_poster.jpg",
+        genre: "Superhéroes",
+        duration: "181 min",
+        rating: 4.9,
+        watchLink: "https://drive.google.com/tu-enlace-avengers-endgame"
+      }
+    ];
+
+    let currentProfile = null;
+
+    // DOM
+    const loginScreen = document.getElementById('login-screen');
+    const profileSelection = document.getElementById('profile-selection');
+    const mainScreen = document.getElementById('main-screen');
+    const profilesContainer = document.getElementById('profiles-container');
+    const accountMenu = document.getElementById('account-menu');
+    const accountAvatar = document.getElementById('account-avatar');
+    const accountDropdown = document.getElementById('account-dropdown');
+    const changeProfileBtn = document.getElementById('change-profile-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const manageProfilesBtn = document.getElementById('manage-profiles-btn');
+    const modal = document.getElementById('modal');
+    const profileNameInput = document.getElementById('profile-name');
+    const profilePhotoInput = document.getElementById('profile-photo');
+    const saveProfileBtn = document.getElementById('save-profile');
+    const cancelProfileBtn = document.getElementById('cancel-profile');
+
+    const bookInfoModal = document.getElementById('book-info-modal');
+    const bookInfoTitle = document.getElementById('book-info-title');
+    const bookInfoAuthor = document.getElementById('book-info-author');
+    const bookInfoYear = document.getElementById('book-info-year');
+    const bookInfoDescription = document.getElementById('book-info-description');
+
+    // Login simulado
+    document.getElementById('login-form').addEventListener('submit', e => {
+      e.preventDefault();
+      loginScreen.style.display = 'none';
+      showProfileSelection();
+    });
+
+    // Mostrar selección perfiles con emojis
+    function showProfileSelection() {
+      profileSelection.style.display = 'flex';
+      profilesContainer.innerHTML = '';
+      profiles.forEach(p => {
+        const card = document.createElement('div');
+        card.className = `profile-item ${p.color}`;
+        card.innerHTML = `
+          <div class="profile-avatar">
+            ${p.photo ? `<img src="${p.photo}" alt="${p.name}">` : p.emoji}
+          </div>
+          <div class="profile-name">${p.name}</div>
+        `;
+        card.addEventListener('click', () => {
+          currentProfile = p;
+          profileSelection.style.display = 'none';
+          showMainScreen();
+        });
+        profilesContainer.appendChild(card);
+      });
+    }
+
+    // Abrir modal agregar perfil
+    manageProfilesBtn.addEventListener('click', () => {
+      profileNameInput.value = '';
+      profilePhotoInput.value = '';
+      modal.classList.add('active');
+    });
+
+    // Cancelar modal agregar perfil
+    cancelProfileBtn.addEventListener('click', () => {
+      modal.classList.remove('active');
+    });
+
+    // Guardar nuevo perfil
+    saveProfileBtn.addEventListener('click', () => {
+      const name = profileNameInput.value.trim();
+      if (!name) {
+        alert('Por favor, ingresa un nombre para el perfil.');
+        return;
+      }
+      const file = profilePhotoInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          addProfile(name, e.target.result);
+          modal.classList.remove('active');
+        };
+        reader.readAsDataURL(file);
+      } else {
+        addProfile(name, null);
+        modal.classList.remove('active');
+      }
+    });
+
+    // Añadir perfil nuevo
+    function addProfile(name, photo) {
+      const avatar = name.charAt(0).toUpperCase();
+      const newProfile = { id: profiles.length + 1, name, color: "", photo, emoji: avatar };
+      profiles.push(newProfile);
+      showProfileSelection();
+    }
+
+    // Mostrar pantalla principal
+    function showMainScreen() {
+      mainScreen.style.display = 'flex';
+      updateAccountAvatar();
+      loadHero(movies[0]);
+      loadCarousels();
+    }
+
+    // Actualizar avatar en menú cuenta
+    function updateAccountAvatar() {
+      if (currentProfile.photo) {
+        accountAvatar.innerHTML = `<img src="${currentProfile.photo}" alt="${currentProfile.name}">`;
+      } else {
+        accountAvatar.textContent = currentProfile.emoji || currentProfile.name.charAt(0).toUpperCase();
+      }
+    }
+
+    // Cargar hero
+    function loadHero(movie) {
+      const hero = document.getElementById('hero');
+      hero.style.backgroundImage = `url(${movie.cover})`;
+      document.getElementById('hero-title').textContent = movie.title;
+      document.getElementById('hero-description').textContent = movie.description;
+      document.getElementById('btn-read').onclick = () => {
+        if (movie.watchLink) {
+          window.open(movie.watchLink, '_blank');
+        }
+      };
+    }
+
+    // Cargar carruseles
+    function loadCarousels() {
+      const continueContainer = document.getElementById('continue-reading');
+      continueContainer.innerHTML = '';
+      movies.slice(0,3).forEach(movie => {
+        continueContainer.appendChild(createMovieCard(movie));
+      });
+
+      const featuredContainer = document.getElementById('featured-series');
+      featuredContainer.innerHTML = '';
+      const rocky4 = movies.find(m => m.title === "Rocky 4");
+      if (rocky4) featuredContainer.appendChild(createMovieCard(rocky4));
+
+      const classicsContainer = document.getElementById('classics');
+      classicsContainer.innerHTML = '';
+      movies.filter(m => m.title !== "Rocky 4" && m.id > 3).forEach(movie => {
+        classicsContainer.appendChild(createMovieCard(movie));
+      });
+
+      const newArrivalsContainer = document.getElementById('new-arrivals');
+      newArrivalsContainer.innerHTML = '';
+      movies.slice(0,2).forEach(movie => {
+        newArrivalsContainer.appendChild(createMovieCard(movie));
+      });
+    }
+
+    // Crear tarjeta película con evento para abrir enlace
+    function createMovieCard(movie) {
+      const card = document.createElement('div');
+      card.className = 'book-card';
+      card.innerHTML = `
+        <img src="${movie.cover}" alt="${movie.title}" />
+        <div class="book-overlay">${movie.title}</div>
+      `;
+      card.title = `${movie.title} - ${movie.genre} - ${movie.rating}⭐`;
+      card.style.cursor = "pointer";
+      card.addEventListener('click', () => {
+        if (movie.watchLink) {
+          window.open(movie.watchLink, '_blank');
+        } else {
+          bookInfoTitle.textContent = movie.title;
+          bookInfoAuthor.textContent = movie.director;
+          bookInfoYear.textContent = movie.year;
+          bookInfoDescription.textContent = movie.description;
+          bookInfoModal.classList.add('active');
+        }
+      });
+      return card;
+    }
+
+    // Cerrar modal info película
+    document.getElementById('book-info-close').addEventListener('click', () => {
+      bookInfoModal.classList.remove('active');
+    });
+    bookInfoModal.addEventListener('click', e => {
+      if (e.target === bookInfoModal) {
+        bookInfoModal.classList.remove('active');
+      }
+    });
+
+    // Menú cuenta
+    accountAvatar.addEventListener('click', () => {
+      accountDropdown.classList.toggle('active');
+    });
+
+    changeProfileBtn.addEventListener('click', () => {
+      accountDropdown.classList.remove('active');
+      mainScreen.style.display = 'none';
+      showProfileSelection();
+    });
+
+    logoutBtn.addEventListener('click', () => {
+      accountDropdown.classList.remove('active');
+      mainScreen.style.display = 'none';
+      loginScreen.style.display = 'flex';
+      currentProfile = null;
+    });
+
+    window.addEventListener('click', e => {
+      if (!accountMenu.contains(e.target)) {
+        accountDropdown.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>
